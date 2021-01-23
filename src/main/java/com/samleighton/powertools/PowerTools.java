@@ -1,6 +1,6 @@
 package com.samleighton.powertools;
 
-import com.samleighton.powertools.init.Items;
+import com.samleighton.powertools.init.PowerToolItems;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -22,7 +22,7 @@ public class PowerTools {
         // Add the setup listener to event bus
         modEventBus.addListener(this::setup);
         // Register all DeferredRegisters of Item type with the event bus
-        Items.DEFERRED_ITEMS.register(modEventBus);
+        PowerToolItems.DEFERRED_ITEMS.register(modEventBus);
         // Register our mod with the MinecraftForge event bus
         MinecraftForge.EVENT_BUS.register(this);
     }

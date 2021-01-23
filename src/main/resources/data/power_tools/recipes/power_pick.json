@@ -2,24 +2,24 @@
   "type": "minecraft:crafting_shaped",
   "pattern":
   [
-    "xxa",
-    "x x",
-    "xxx"
+    "xxx",
+    " a ",
+    " a "
   ],
   "key":
   {
     "x":
     {
-      "tag": "forge:block/block_diamond"
+      "item": "minecraft:diamond_block"
     },
     "a":
     {
-      "item": "forge:item/stick"
+      "item": "minecraft:stick"
     }
   },
   "result":
   {
     "item": "power_tools:power_pick",
-    "count": 9
+    "count": 1
   }
 }
