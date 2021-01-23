@@ -18,8 +18,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.stream.Collectors;
 
+import static net.minecraft.item.ItemGroup.TOOLS;
+
 // The value here should match an entry in the META-INF/mods.toml file
-@Mod("power_tools")
+// @Mod("power_tools")
 public class ExampleMod {
 
     // Directly reference a log4j logger.
