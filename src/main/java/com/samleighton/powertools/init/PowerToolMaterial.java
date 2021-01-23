@@ -1,28 +1,29 @@
 package com.samleighton.powertools.init;
 
-import net.minecraft.block.Blocks;
-import net.minecraft.client.Minecraft;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.IItemTier;
-import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.LazyValue;
+
+import java.util.function.Supplier;
 
 public enum PowerToolMaterial implements IItemTier {
 
-    power_tools(10.0f, 9.0f, 800, 3, 25, Items.DIAMOND_BLOCK);
+    POWER(10.0f, 12.0f, 1500, 4, 25, () -> {
+        return Ingredient.fromItems(Items.DIAMOND_BLOCK);
+    });
 
-    private float attackDamage, efficiency;
-    private int durability, harvestLevel, enchantability;
-    private Item repairMaterial;
+    private final float attackDamage, efficiency;
+    private final int durability, harvestLevel, enchantability;
+    private final LazyValue<Ingredient> repairMaterial;
 
-    private PowerToolMaterial (float attackDamage, float efficiency, int durability, int harvestLevel, int enchantability, Item repairMaterial) {
+    PowerToolMaterial(float attackDamage, float efficiency, int durability, int harvestLevel, int enchantability, Supplier<Ingredient> repairMaterial) {
         this.attackDamage = attackDamage;
         this.efficiency = efficiency;
         this.durability = durability;
         this.harvestLevel = harvestLevel;
         this.enchantability = enchantability;
-        this.repairMaterial = repairMaterial;
+        this.repairMaterial = new LazyValue<>(repairMaterial);
     }
 
     @Override
@@ -52,6 +53,6 @@ public enum PowerToolMaterial implements IItemTier {
 
     @Override
     public Ingredient getRepairMaterial() {
-        return Ingredient.fromItems(this.repairMaterial);
+        return this.repairMaterial.getValue();
     }
 }
