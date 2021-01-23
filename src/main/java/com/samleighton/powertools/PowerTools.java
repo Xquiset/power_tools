@@ -1,52 +1,34 @@
 package com.samleighton.powertools;
 
 import com.samleighton.powertools.init.Items;
-import com.samleighton.powertools.items.PowerPick;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemTier;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-@Mod("power_tools")
+@Mod(PowerTools.MOD_ID)
 public class PowerTools {
 
-    public static PowerTools instance;
-    //private static final Logger logger = LogManager.getLogManager().getLogger("power_tools");
+    public static final String MOD_ID = "power_tools";
+    // Directly reference a log4j logger.
+    private static final Logger LOGGER = LogManager.getLogger();
 
-    public PowerTools(){
-
-        instance = this;
-
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientRegistration);
-
+    public PowerTools() {
+        // Obtain Mod Event Bus
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        // Add the setup listener to event bus
+        modEventBus.addListener(this::setup);
+        // Register all DeferredRegisters of Item type with the event bus
+        Items.DEFERRED_ITEMS.register(modEventBus);
+        // Register our mod with the MinecraftForge event bus
         MinecraftForge.EVENT_BUS.register(this);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-        //logger.info("setup method registration");
+        LOGGER.info("Logging setup");
     }
 
-    private void clientRegistration(final FMLClientSetupEvent event) {
-        //logger.info("clientRegistries method registered");
-    }
-
-    @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
-    public static class RegistryEvents {
-        @SubscribeEvent
-        public static void registerItems(final RegistryEvent.Register<Item> event) {
-            event.getRegistry().registerAll(
-                    Items.power_pick = new PowerPick(ItemTier.WOOD, 2, 5.0f, new Item.Properties().group(ItemGroup.TOOLS)).setRegistryName(new ResourceLocation("power_tools", "power_pick"))
-            );
-        }
-    }
 }
