@@ -14,7 +14,7 @@ public class PowerTools {
 
     public static final String MOD_ID = "power_tools";
     // Directly reference a log4j logger.
-    private static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger();
 
     public PowerTools() {
         // Obtain Mod Event Bus
