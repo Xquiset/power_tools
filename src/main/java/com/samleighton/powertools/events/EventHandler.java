@@ -7,10 +7,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ToolType;
@@ -39,45 +39,47 @@ public class EventHandler {
         Item itemInHand = player.getHeldItemMainhand().getItem();
         // Get the BlockState of the broken block from event
         BlockState blockState = event.getState();
-        // Get the RayTraceResult objectMouseOver from Minecraft instance
-        RayTraceResult lookingAt = Minecraft.getInstance().objectMouseOver;
-        // Get the block ray trace result from the item
-        BlockRayTraceResult blockRayTraceResult = PowerToolItems.blockRayTraceResult(Minecraft.getInstance().world, player, RayTraceContext.FluidMode.ANY);
-        // Get the face the block was broken from as a string
-        String blockFaceBroken = blockRayTraceResult.getFace().getString();
+        // Get position of block that just broke
+        BlockPos blockBrokePos = event.getPos();
+        // Get the block face from ray trace result item
+        BlockRayTraceResult blockRayTraceResult = PowerToolItems.blockRayTraceResult(Minecraft.getInstance().world, player, RayTraceContext.FluidMode.NONE);
+        Direction blockFace = blockRayTraceResult.getFace();
 
-        // Check if the player is looking at an actual block, null if not a block
-        if (lookingAt != null) {
-            // Get position of block that just broke
-            BlockPos blockBrokePos = new BlockPos(lookingAt.getHitVec());
+        // Check if the player is holding a power pick and if the block requires a tool to be broken
+        if (itemInHand.equals(PowerToolItems.POWER_PICK.get()) && blockState.getRequiresTool()) {
+            // Check if the power pick can harvest the block broken or if the block even requires a tool
+            if (blockState.getHarvestTool() == ToolType.PICKAXE) {
+                // Create BlockState array of all surrounding blocks
+                ArrayList<BlockPos> surroundingBlocks = new ArrayList<>();
 
-            // Check if the player is holding a power pick and if the block requires a tool to be broken
-            if (itemInHand.equals(PowerToolItems.POWER_PICK.get()) && blockState.getRequiresTool()) {
-                // Cancel event
-                //event.setCanceled(true);
-                // Check if the power pick can harvest the block broken or if the block even requires a tool
-                if (blockState.getHarvestTool() == ToolType.PICKAXE) {
-                    // Create BlockState array of all surrounding blocks
-                    ArrayList<BlockPos> surroundingBlocks = new ArrayList<>();
-
-                    if (blockFaceBroken.equalsIgnoreCase("east") || blockFaceBroken.equalsIgnoreCase("west")) {
-                        player.sendMessage(new StringTextComponent("Broke block on " + blockFaceBroken), player.getUniqueID());
+                player.sendMessage(new StringTextComponent("Direction = " + blockFace.toString()), player.getUniqueID());
+                switch (blockFace) {
+                    case UP:
+                    case DOWN:
+                        surroundingBlocks = calcUpDownBlocks(blockBrokePos);
+                        break;
+                    case NORTH:
+                    case SOUTH:
+                        surroundingBlocks = calcNorthSouthBlocks(blockBrokePos);
+                        break;
+                    case EAST:
+                    case WEST:
                         surroundingBlocks = calcEastWestBlocks(blockBrokePos);
-                    }
+                        break;
+                }
 
-                    // Separate log list per event call
-                    PowerTools.LOGGER.info("-------------------------------------------------------------------------------------------------------------------------------------------------");
-                    // Loop over our surrounding blocks array
-                    for (BlockPos pos : surroundingBlocks) {
-                        // Grab the BlockState from the world using the BlockPos
-                        BlockState state = event.getWorld().getBlockState(pos);
-                        // Check if the block in block state is an AirBlock
-                        if (!(state.getBlock() instanceof AirBlock)) {
-                            // Log the BlockPos and Block
-                            PowerTools.LOGGER.info(pos.toString() + " : " + state.getBlock().toString());
-                            // Destroy the block and leave a drop if a pickaxe can harvest the block
-                            event.getWorld().destroyBlock(pos, state.getHarvestTool() == ToolType.PICKAXE);
-                        }
+                // Separate log list per event call
+                PowerTools.LOGGER.info("-------------------------------------------------------------------------------------------------------------------------------------------------");
+                // Loop over our surrounding blocks array
+                for (BlockPos pos : surroundingBlocks) {
+                    // Grab the BlockState from the world using the BlockPos
+                    BlockState state = event.getWorld().getBlockState(pos);
+                    // Check if the block in block state is an AirBlock
+                    if (!(state.getBlock() instanceof AirBlock) && state.getHarvestTool() == ToolType.PICKAXE) {
+                        // Log the BlockPos and Block
+                        PowerTools.LOGGER.info(pos.toString() + " : " + state.getBlock().toString());
+                        // Destroy the block and leave a drop if a pickaxe can harvest the block
+                        event.getWorld().destroyBlock(pos, true);
                     }
                 }
             }
@@ -85,18 +87,46 @@ public class EventHandler {
     }
 
     private static ArrayList<BlockPos> calcEastWestBlocks(BlockPos pos) {
-        PowerTools.LOGGER.info(pos.toString());
-        ArrayList<BlockPos> temp = new ArrayList<>();
-
+        ArrayList<BlockPos> blocks = new ArrayList<>();
         int x = pos.getX();
 
         for (int y = -1; y <= 1; y++) {
             for (int z = -1; z <= 1; z++) {
                 BlockPos tempPos = new BlockPos(x, pos.getY() + y, pos.getZ() + z);
-                temp.add(tempPos);
+                blocks.add(tempPos);
             }
         }
 
-        return temp;
+        return blocks;
+    }
+
+    // NORTH & SOUTH Z is constant
+    private static ArrayList<BlockPos> calcNorthSouthBlocks(BlockPos pos) {
+        ArrayList<BlockPos> blocks = new ArrayList<>();
+        int z = pos.getZ();
+
+        for (int y = -1; y <= 1; y++) {
+            for (int x = -1; x <= 1; x++) {
+                BlockPos tempPos = new BlockPos(pos.getX() + x, pos.getY() + y, z);
+                blocks.add(tempPos);
+            }
+        }
+
+        return blocks;
+    }
+
+    // NORTH & SOUTH Z is constant
+    private static ArrayList<BlockPos> calcUpDownBlocks(BlockPos pos) {
+        ArrayList<BlockPos> blocks = new ArrayList<>();
+        int y = pos.getY();
+
+        for (int x = -1; x <= 1; x++) {
+            for (int z = -1; z <= 1; z++) {
+                BlockPos tempPos = new BlockPos(pos.getX() + x, y, pos.getZ() + z);
+                blocks.add(tempPos);
+            }
+        }
+
+        return blocks;
     }
 }
