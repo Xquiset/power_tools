@@ -29,9 +29,9 @@ displayName = "Power Tools" #mandatory
 # A file name (in the root of the mod JAR) containing a logo for display
 #logoFile="examplemod.png" #optional
 # A text field displayed in the mod UI
-credits = "Xquiset, GiggityTurtle, IamWambo" #optional
+credits = "Xquiset, IamWambo" #optional
 # A text field displayed in the mod UI
-authors = "Xquiset, GiggityTurtle, IamWambo" #optional
+authors = "Xquiset, IamWambo" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description = '''A set of multi function power tools'''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.

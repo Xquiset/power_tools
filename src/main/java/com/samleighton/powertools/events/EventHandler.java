@@ -1,10 +1,9 @@
 package com.samleighton.powertools.events;
 
 import com.samleighton.powertools.PowerTools;
-import com.samleighton.powertools.init.PowerToolItems;
+import com.samleighton.powertools.items.PowerPick;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.util.Direction;
@@ -37,18 +36,22 @@ public class EventHandler {
         PlayerEntity player = event.getPlayer();
         // Get the item in the players hand
         Item itemInHand = player.getHeldItemMainhand().getItem();
-        // Get the BlockState of the broken block from event
-        BlockState blockState = event.getState();
-        // Get position of block that just broke
-        BlockPos blockBrokePos = event.getPos();
-        // Get the block face from ray trace result item
-        BlockRayTraceResult blockRayTraceResult = PowerToolItems.blockRayTraceResult(Minecraft.getInstance().world, player, RayTraceContext.FluidMode.NONE);
-        Direction blockFace = blockRayTraceResult.getFace();
 
-        // Check if the player is holding a power pick and if the block requires a tool to be broken
-        if (itemInHand.equals(PowerToolItems.POWER_PICK.get()) && blockState.getRequiresTool()) {
-            // Check if the power pick can harvest the block broken or if the block even requires a tool
-            if (blockState.getHarvestTool() == ToolType.PICKAXE) {
+        // Check if the item in the players hand is a PowerPick
+        if (itemInHand instanceof PowerPick) {
+            // Get the BlockState of the broken block from event
+            BlockState blockState = event.getState();
+            // Get position of block that just broke
+            BlockPos blockBrokePos = event.getPos();
+            // Cast item in hand to power pick for ray tracing
+            PowerPick powerPick = (PowerPick) itemInHand;
+            // Ray trace from item in hand to block
+            BlockRayTraceResult blockRayTraceResult = powerPick.blockRayTrace(event.getPlayer().getEntityWorld(), player, RayTraceContext.FluidMode.NONE);
+            // Get the block face from ray trace result
+            Direction blockFace = blockRayTraceResult.getFace();
+
+            // Check if the player is holding a power pick and if the block requires a tool to be broken
+            if (blockState.getRequiresTool() && blockState.getHarvestTool() == ToolType.PICKAXE) {
                 // Create BlockState array of all surrounding blocks
                 ArrayList<BlockPos> surroundingBlocks = new ArrayList<>();
 
@@ -86,6 +89,7 @@ public class EventHandler {
         }
     }
 
+    // EAST & WEST X is constant
     private static ArrayList<BlockPos> calcEastWestBlocks(BlockPos pos) {
         ArrayList<BlockPos> blocks = new ArrayList<>();
         int x = pos.getX();
@@ -115,7 +119,7 @@ public class EventHandler {
         return blocks;
     }
 
-    // NORTH & SOUTH Z is constant
+    // UP & DOWN Y is constant
     private static ArrayList<BlockPos> calcUpDownBlocks(BlockPos pos) {
         ArrayList<BlockPos> blocks = new ArrayList<>();
         int y = pos.getY();
