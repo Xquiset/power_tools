@@ -8,6 +8,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -39,31 +41,29 @@ public class EventHandler {
         BlockState blockState = event.getState();
         // Get the RayTraceResult objectMouseOver from Minecraft instance
         RayTraceResult lookingAt = Minecraft.getInstance().objectMouseOver;
+        // Get the block ray trace result from the item
+        BlockRayTraceResult blockRayTraceResult = PowerToolItems.blockRayTraceResult(Minecraft.getInstance().world, player, RayTraceContext.FluidMode.ANY);
+        // Get the face the block was broken from as a string
+        String blockFaceBroken = blockRayTraceResult.getFace().getString();
 
         // Check if the player is looking at an actual block, null if not a block
         if (lookingAt != null) {
-            // Check if the player is holding a power pick
-            if (itemInHand.equals(PowerToolItems.POWER_PICK.get())) {
-                // Check if the power pick can harvest the block broken, null indicates harvestable by any tool
-                if (blockState.getHarvestTool() == ToolType.PICKAXE || blockState.getHarvestTool() == null) {
-                    // Cancel the event because we will handle it from this point on
-                    event.setCanceled(true);
-                    // Get position of block that just broke
-                    BlockPos blockBrokePos = new BlockPos(lookingAt.getHitVec());
+            // Get position of block that just broke
+            BlockPos blockBrokePos = new BlockPos(lookingAt.getHitVec());
+
+            // Check if the player is holding a power pick and if the block requires a tool to be broken
+            if (itemInHand.equals(PowerToolItems.POWER_PICK.get()) && blockState.getRequiresTool()) {
+                // Cancel event
+                //event.setCanceled(true);
+                // Check if the power pick can harvest the block broken or if the block even requires a tool
+                if (blockState.getHarvestTool() == ToolType.PICKAXE) {
                     // Create BlockState array of all surrounding blocks
                     ArrayList<BlockPos> surroundingBlocks = new ArrayList<>();
 
-                    // Loop to create all possible x,y,z coordinates for blocks
-                    for (int x = -1; x <= 1; x++) {
-                        for (int y = -1; y <= 1; y++) {
-                            for (int z = -1; z <= 1; z++) {
-                                surroundingBlocks.add(new BlockPos(blockBrokePos.getX() + x, blockBrokePos.getY() + y, blockBrokePos.getZ() + z));
-                            }
-                        }
+                    if (blockFaceBroken.equalsIgnoreCase("east") || blockFaceBroken.equalsIgnoreCase("west")) {
+                        player.sendMessage(new StringTextComponent("Broke block on " + blockFaceBroken), player.getUniqueID());
+                        surroundingBlocks = calcEastWestBlocks(blockBrokePos);
                     }
-
-                    // Remove element that contains block we started with
-                    surroundingBlocks.remove(new BlockPos(blockBrokePos.getX(), blockBrokePos.getY(), blockBrokePos.getZ()));
 
                     // Separate log list per event call
                     PowerTools.LOGGER.info("-------------------------------------------------------------------------------------------------------------------------------------------------");
@@ -82,5 +82,21 @@ public class EventHandler {
                 }
             }
         }
+    }
+
+    private static ArrayList<BlockPos> calcEastWestBlocks(BlockPos pos) {
+        PowerTools.LOGGER.info(pos.toString());
+        ArrayList<BlockPos> temp = new ArrayList<>();
+
+        int x = pos.getX();
+
+        for (int y = -1; y <= 1; y++) {
+            for (int z = -1; z <= 1; z++) {
+                BlockPos tempPos = new BlockPos(x, pos.getY() + y, pos.getZ() + z);
+                temp.add(tempPos);
+            }
+        }
+
+        return temp;
     }
 }
