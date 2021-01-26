@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 @Mod(PowerTools.MOD_ID)
 public class PowerTools {
 
+    // Constant MOD_ID
     public static final String MOD_ID = "power_tools";
     // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger();

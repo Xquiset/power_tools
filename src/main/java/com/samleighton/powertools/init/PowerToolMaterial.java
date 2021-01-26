@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 
 public enum PowerToolMaterial implements IItemTier {
 
+    // Create the POWER tier
     POWER(10.0f, 12.0f, 1500, 4, 25, () -> {
         return Ingredient.fromItems(Items.DIAMOND_BLOCK);
     });

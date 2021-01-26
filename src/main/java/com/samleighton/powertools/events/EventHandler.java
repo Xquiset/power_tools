@@ -52,10 +52,10 @@ public class EventHandler {
 
             // Check if the player is holding a power pick and if the block requires a tool to be broken
             if (blockState.getRequiresTool() && blockState.getHarvestTool() == ToolType.PICKAXE) {
-                // Create BlockState array of all surrounding blocks
+                // Create BlockPos array of all surrounding blocks
                 ArrayList<BlockPos> surroundingBlocks = new ArrayList<>();
 
-                player.sendMessage(new StringTextComponent("Direction = " + blockFace.toString()), player.getUniqueID());
+                // Determine which blocks to calculate for destruction
                 switch (blockFace) {
                     case UP:
                     case DOWN:
@@ -89,7 +89,13 @@ public class EventHandler {
         }
     }
 
-    // EAST & WEST X is constant
+    /**
+     * Calculates the blocks to destroy when block was destroyed
+     * on East or West face
+     *
+     * @param pos The position of the block destroyed
+     * @return The array of blocks to destroy
+     */
     private static ArrayList<BlockPos> calcEastWestBlocks(BlockPos pos) {
         ArrayList<BlockPos> blocks = new ArrayList<>();
         int x = pos.getX();
@@ -104,7 +110,13 @@ public class EventHandler {
         return blocks;
     }
 
-    // NORTH & SOUTH Z is constant
+    /**
+     * Calculates the blocks to destroy when block was destroyed
+     * on North or South face
+     *
+     * @param pos The position of the block destroyed
+     * @return The array of blocks to destroy
+     */
     private static ArrayList<BlockPos> calcNorthSouthBlocks(BlockPos pos) {
         ArrayList<BlockPos> blocks = new ArrayList<>();
         int z = pos.getZ();
@@ -119,7 +131,13 @@ public class EventHandler {
         return blocks;
     }
 
-    // UP & DOWN Y is constant
+    /**
+     * Calculates the blocks to destroy when block was destroyed
+     * on Up or Down face
+     *
+     * @param pos The position of the block destroyed
+     * @return The array of blocks to destroy
+     */
     private static ArrayList<BlockPos> calcUpDownBlocks(BlockPos pos) {
         ArrayList<BlockPos> blocks = new ArrayList<>();
         int y = pos.getY();
