@@ -7,7 +7,7 @@ import net.minecraft.util.LazyValue;
 
 import java.util.function.Supplier;
 
-public enum PowerToolMaterial implements IItemTier {
+public enum PowerToolTier implements IItemTier {
 
     // Create the POWER tier
     POWER(10.0f, 12.0f, 1500, 4, 25, () -> {
@@ -18,7 +18,7 @@ public enum PowerToolMaterial implements IItemTier {
     private final int durability, harvestLevel, enchantability;
     private final LazyValue<Ingredient> repairMaterial;
 
-    PowerToolMaterial(float attackDamage, float efficiency, int durability, int harvestLevel, int enchantability, Supplier<Ingredient> repairMaterial) {
+    PowerToolTier(float attackDamage, float efficiency, int durability, int harvestLevel, int enchantability, Supplier<Ingredient> repairMaterial) {
         this.attackDamage = attackDamage;
         this.efficiency = efficiency;
         this.durability = durability;

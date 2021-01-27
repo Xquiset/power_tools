@@ -1,8 +1,8 @@
 package com.samleighton.powertools.events;
 
 import com.samleighton.powertools.PowerTools;
-import com.samleighton.powertools.items.PowerPick;
-import com.samleighton.powertools.items.PowerScoop;
+import com.samleighton.powertools.tools.items.PowerPick;
+import com.samleighton.powertools.tools.items.PowerScoop;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -37,13 +37,12 @@ public class EventHandler {
         PlayerEntity player = event.getPlayer();
         // Get the item in the players hand
         Item itemInHand = player.getHeldItemMainhand().getItem();
-
+        // Get the BlockState of the broken block from event
+        BlockState blockState = event.getState();
+        // Get position of block that just broke
+        BlockPos blockBrokePos = event.getPos();
         // Check if the item in the players hand is a PowerPick
         if (itemInHand instanceof PowerPick) {
-            // Get the BlockState of the broken block from event
-            BlockState blockState = event.getState();
-            // Get position of block that just broke
-            BlockPos blockBrokePos = event.getPos();
             // Cast item in hand to power pick for ray tracing
             PowerPick powerPick = (PowerPick) itemInHand;
             // Ray trace from item in hand to block
@@ -90,10 +89,6 @@ public class EventHandler {
         }
         // Check if the item in the players hand is a PowerPick
         else if (itemInHand instanceof PowerScoop) {
-            // Get the BlockState of the broken block from event
-            BlockState blockState = event.getState();
-            // Get position of block that just broke
-            BlockPos blockBrokePos = event.getPos();
             // Cast item in hand to power pick for ray tracing
             PowerScoop powerScoop = (PowerScoop) itemInHand;
             // Ray trace from item in hand to block
@@ -138,68 +133,5 @@ public class EventHandler {
                 }
             }
         }
-    }
-
-    /**
-     * Calculates the blocks to destroy when block was destroyed
-     * on East or West face
-     *
-     * @param pos The position of the block destroyed
-     * @return The array of blocks to destroy
-     */
-    private static ArrayList<BlockPos> calcEastWestBlocks(BlockPos pos) {
-        ArrayList<BlockPos> blocks = new ArrayList<>();
-        int x = pos.getX();
-
-        for (int y = -1; y <= 1; y++) {
-            for (int z = -1; z <= 1; z++) {
-                BlockPos tempPos = new BlockPos(x, pos.getY() + y, pos.getZ() + z);
-                blocks.add(tempPos);
-            }
-        }
-
-        return blocks;
-    }
-
-    /**
-     * Calculates the blocks to destroy when block was destroyed
-     * on North or South face
-     *
-     * @param pos The position of the block destroyed
-     * @return The array of blocks to destroy
-     */
-    private static ArrayList<BlockPos> calcNorthSouthBlocks(BlockPos pos) {
-        ArrayList<BlockPos> blocks = new ArrayList<>();
-        int z = pos.getZ();
-
-        for (int y = -1; y <= 1; y++) {
-            for (int x = -1; x <= 1; x++) {
-                BlockPos tempPos = new BlockPos(pos.getX() + x, pos.getY() + y, z);
-                blocks.add(tempPos);
-            }
-        }
-
-        return blocks;
-    }
-
-    /**
-     * Calculates the blocks to destroy when block was destroyed
-     * on Up or Down face
-     *
-     * @param pos The position of the block destroyed
-     * @return The array of blocks to destroy
-     */
-    private static ArrayList<BlockPos> calcUpDownBlocks(BlockPos pos) {
-        ArrayList<BlockPos> blocks = new ArrayList<>();
-        int y = pos.getY();
-
-        for (int x = -1; x <= 1; x++) {
-            for (int z = -1; z <= 1; z++) {
-                BlockPos tempPos = new BlockPos(pos.getX() + x, y, pos.getZ() + z);
-                blocks.add(tempPos);
-            }
-        }
-
-        return blocks;
     }
 }

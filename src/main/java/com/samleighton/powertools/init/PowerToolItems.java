@@ -1,8 +1,8 @@
 package com.samleighton.powertools.init;
 
 import com.samleighton.powertools.PowerTools;
-import com.samleighton.powertools.items.PowerPick;
-import com.samleighton.powertools.items.PowerScoop;
+import com.samleighton.powertools.tools.items.PowerPick;
+import com.samleighton.powertools.tools.items.PowerScoop;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraftforge.fml.RegistryObject;
@@ -16,9 +16,9 @@ public class PowerToolItems {
 
     // Create the registry object for the power pick item
     public static final RegistryObject<Item> POWER_PICK = DEFERRED_ITEMS.register("power_pick",
-            () -> new PowerPick(PowerToolMaterial.POWER, 0, 0f, new Item.Properties().group(ItemGroup.TOOLS)));
+            () -> new PowerPick(PowerToolTier.POWER, 0, 0f, new Item.Properties().group(ItemGroup.TOOLS)));
 
     // Create the registry object for the power scoop item
     public static final RegistryObject<Item> POWER_SCOOP = DEFERRED_ITEMS.register("power_scoop",
-            () -> new PowerScoop(PowerToolMaterial.POWER, 0, 0f, new Item.Properties().group(ItemGroup.TOOLS)));
+            () -> new PowerScoop(PowerToolTier.POWER, 0, 0f, new Item.Properties().group(ItemGroup.TOOLS)));
 }
