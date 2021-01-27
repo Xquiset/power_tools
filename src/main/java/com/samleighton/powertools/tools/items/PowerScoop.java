@@ -1,21 +1,15 @@
 package com.samleighton.powertools.tools.items;
 
 import com.google.common.collect.Sets;
-import com.samleighton.powertools.PowerTools;
 import com.samleighton.powertools.tools.PowerToolsItem;
-import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.IItemTier;
-import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.world.IWorld;
 import net.minecraftforge.common.ToolType;
 
-import java.util.ArrayList;
 import java.util.Set;
 
 public class PowerScoop extends PowerToolsItem {
@@ -30,49 +24,11 @@ public class PowerScoop extends PowerToolsItem {
     }
 
     public void destroyAOEBlocks(PlayerEntity player, BlockPos blockPos) {
-        ArrayList<BlockPos> surroundingBlocks = new ArrayList<>();
 
-        // Ray trace from item in hand to block
-        BlockRayTraceResult blockRayTraceResult = blockRayTrace(player.getEntityWorld(), player);
-        // Get the block face from ray trace result
-        Direction blockFace = blockRayTraceResult.getFace();
+        setAoeBlocks(player, blockPos);
 
-        // Determine which blocks to calculate for destruction
-        switch (blockFace) {
-            case UP:
-            case DOWN:
-                surroundingBlocks = calcUpDownBlocks(blockPos);
-                break;
-            case NORTH:
-            case SOUTH:
-                surroundingBlocks = calcNorthSouthBlocks(blockPos);
-                break;
-            case EAST:
-            case WEST:
-                surroundingBlocks = calcEastWestBlocks(blockPos);
-                break;
-        }
+        getAoeBlocks().removeIf(pos -> !canHarvestBlock(player.getEntityWorld().getBlockState(pos)) || pos.equals(blockPos));
 
-        //TODO: Refactor more
-        boolean test = surroundingBlocks.removeIf(pos -> !canHarvestBlock(player.getEntityWorld().getBlockState(pos)));
-
-        destroyBlocksInWorld(player.getEntityWorld(), surroundingBlocks);
-    }
-
-    private void destroyBlocksInWorld(IWorld world, ArrayList<BlockPos> blocksToDestroy) {
-        // Separate log list per event call
-        PowerTools.LOGGER.info("-------------------------------------------------------------------------------------------------------------------------------------------------");
-        // Loop over our surrounding blocks array
-        for (BlockPos pos : blocksToDestroy) {
-            // Grab the BlockState from the world using the BlockPos
-            BlockState state = world.getBlockState(pos);
-            // Check if the block in block state is an AirBlock
-            if (!(state.getBlock() instanceof AirBlock)) {
-                // Log the BlockPos and Block
-                PowerTools.LOGGER.info(pos.toString() + " : " + state.getBlock().toString());
-                // Destroy the block and leave a drop if a pickaxe can harvest the block
-                world.destroyBlock(pos, true);
-            }
-        }
+        destroyBlocksInWorld(player.getEntityWorld(), player);
     }
 }
