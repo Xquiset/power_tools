@@ -2,6 +2,7 @@ package com.samleighton.powertools.events;
 
 import com.samleighton.powertools.PowerTools;
 import com.samleighton.powertools.items.PowerPick;
+import com.samleighton.powertools.items.PowerScoop;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -82,6 +83,56 @@ public class EventHandler {
                         // Log the BlockPos and Block
                         PowerTools.LOGGER.info(pos.toString() + " : " + state.getBlock().toString());
                         // Destroy the block and leave a drop if a pickaxe can harvest the block
+                        event.getWorld().destroyBlock(pos, true);
+                    }
+                }
+            }
+        }
+        // Check if the item in the players hand is a PowerPick
+        else if (itemInHand instanceof PowerScoop) {
+            // Get the BlockState of the broken block from event
+            BlockState blockState = event.getState();
+            // Get position of block that just broke
+            BlockPos blockBrokePos = event.getPos();
+            // Cast item in hand to power pick for ray tracing
+            PowerScoop powerScoop = (PowerScoop) itemInHand;
+            // Ray trace from item in hand to block
+            BlockRayTraceResult blockRayTraceResult = powerScoop.blockRayTrace(event.getPlayer().getEntityWorld(), player, RayTraceContext.FluidMode.NONE);
+            // Get the block face from ray trace result
+            Direction blockFace = blockRayTraceResult.getFace();
+
+            // Check if the player is holding a power pick and if the block requires a tool to be broken
+            if (blockState.getHarvestTool() == ToolType.SHOVEL) {
+                // Create BlockPos array of all surrounding blocks
+                ArrayList<BlockPos> surroundingBlocks = new ArrayList<>();
+
+                // Determine which blocks to calculate for destruction
+                switch (blockFace) {
+                    case UP:
+                    case DOWN:
+                        surroundingBlocks = calcUpDownBlocks(blockBrokePos);
+                        break;
+                    case NORTH:
+                    case SOUTH:
+                        surroundingBlocks = calcNorthSouthBlocks(blockBrokePos);
+                        break;
+                    case EAST:
+                    case WEST:
+                        surroundingBlocks = calcEastWestBlocks(blockBrokePos);
+                        break;
+                }
+
+                // Separate log list per event call
+                PowerTools.LOGGER.info("-------------------------------------------------------------------------------------------------------------------------------------------------");
+                // Loop over our surrounding blocks array
+                for (BlockPos pos : surroundingBlocks) {
+                    // Grab the BlockState from the world using the BlockPos
+                    BlockState state = event.getWorld().getBlockState(pos);
+                    // Check if the block in block state is an AirBlock
+                    if (!(state.getBlock() instanceof AirBlock) && state.getHarvestTool() == ToolType.SHOVEL) {
+                        // Log the BlockPos and Block
+                        PowerTools.LOGGER.info(pos.toString() + " : " + state.getBlock().toString());
+                        // Destroy the block and leave a drop if a shovel can harvest the block
                         event.getWorld().destroyBlock(pos, true);
                     }
                 }
