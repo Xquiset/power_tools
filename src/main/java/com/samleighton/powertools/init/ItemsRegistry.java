@@ -1,6 +1,7 @@
 package com.samleighton.powertools.init;
 
 import com.samleighton.powertools.PowerTools;
+import com.samleighton.powertools.tools.PowerToolTier;
 import com.samleighton.powertools.tools.items.PowerPick;
 import com.samleighton.powertools.tools.items.PowerScoop;
 import net.minecraft.item.Item;
@@ -9,7 +10,7 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class PowerToolItems {
+public class ItemsRegistry {
 
     // Create the deferred register for items
     public static final DeferredRegister<Item> DEFERRED_ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, PowerTools.MOD_ID);

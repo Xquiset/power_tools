@@ -1,4 +1,4 @@
-package com.samleighton.powertools.init;
+package com.samleighton.powertools.tools;
 
 import net.minecraft.item.IItemTier;
 import net.minecraft.item.Items;
