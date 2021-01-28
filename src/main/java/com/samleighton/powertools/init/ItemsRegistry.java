@@ -2,6 +2,7 @@ package com.samleighton.powertools.init;
 
 import com.samleighton.powertools.PowerTools;
 import com.samleighton.powertools.tools.PowerToolTier;
+import com.samleighton.powertools.tools.items.PowerChop;
 import com.samleighton.powertools.tools.items.PowerPick;
 import com.samleighton.powertools.tools.items.PowerScoop;
 import net.minecraft.item.Item;
@@ -22,4 +23,9 @@ public class ItemsRegistry {
     // Create the registry object for the power scoop item
     public static final RegistryObject<Item> POWER_SCOOP = DEFERRED_ITEMS.register("power_scoop",
             () -> new PowerScoop(PowerToolTier.POWER, 0, 0f, new Item.Properties().group(ItemGroup.TOOLS)));
+
+    // Create the registry object for the power chop item
+    public static final RegistryObject<Item> POWER_CHOP = DEFERRED_ITEMS.register("power_chop",
+            () -> new PowerChop(PowerToolTier.POWER, 0, 0f, new Item.Properties().group(ItemGroup.TOOLS)));
+
 }
