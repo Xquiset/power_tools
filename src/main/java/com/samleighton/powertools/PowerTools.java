@@ -2,8 +2,10 @@ package com.samleighton.powertools;
 
 import com.samleighton.powertools.init.BlockRegistry;
 import com.samleighton.powertools.init.ItemsRegistry;
+import com.samleighton.powertools.world.OreGeneration;
 import jdk.nashorn.internal.ir.Block;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -27,12 +29,17 @@ public class PowerTools {
         // Register all DeferredRegisters of Item type with the event bus
         ItemsRegistry.DEFERRED_ITEMS.register(modEventBus);
         // Register blocks with event bus
-        BlockRegistry.BLOCKS.register((modEventBus));
+        BlockRegistry.BLOCKS.register(modEventBus);
+        // Set the priority to generate ores as high
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGHEST, OreGeneration::generateOres);
         // Register our mod with the MinecraftForge event bus
         MinecraftForge.EVENT_BUS.register(this);
+
+
     }
 
     private void setup(final FMLCommonSetupEvent event) {
+        //OreGeneration.registerOre();
         LOGGER.info("Logging setup");
     }
 
