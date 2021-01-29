@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "power_tools:citrine_block"
+          "name": "power_tools:citrine"
         }
       ],
       "conditions": [

@@ -1,5 +1,5 @@
 {
     "variants": {
-        "": { "model" : "power_tools:block/citrine_block"}
+        "": { "model" : "power_tools:block/citrine_ore"}
     }
 }

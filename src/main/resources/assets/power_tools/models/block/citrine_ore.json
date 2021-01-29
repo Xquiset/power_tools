@@ -1,6 +1,6 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "all": "power_tools:blocks/citrine_block"
+    "all": "power_tools:blocks/citrine_ore"
   }
 }
