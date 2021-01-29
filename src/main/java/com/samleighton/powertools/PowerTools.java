@@ -1,6 +1,8 @@
 package com.samleighton.powertools;
 
+import com.samleighton.powertools.init.BlockRegistry;
 import com.samleighton.powertools.init.ItemsRegistry;
+import jdk.nashorn.internal.ir.Block;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -24,6 +26,8 @@ public class PowerTools {
         modEventBus.addListener(this::setup);
         // Register all DeferredRegisters of Item type with the event bus
         ItemsRegistry.DEFERRED_ITEMS.register(modEventBus);
+        // Register blocks with event bus
+        BlockRegistry.BLOCKS.register((modEventBus));
         // Register our mod with the MinecraftForge event bus
         MinecraftForge.EVENT_BUS.register(this);
     }

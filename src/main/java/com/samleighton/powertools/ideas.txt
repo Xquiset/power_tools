@@ -1,0 +1,11 @@
+"xtreme" crafting table
+
+texture/color changes for power tools:
+    diamonds
+    iron rods
+
+new items:
+    iron rods
+    citrine
+    citrine ore
+    citrine block
