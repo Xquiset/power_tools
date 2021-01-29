@@ -2,6 +2,7 @@
   "item.power_tools.power_pick": "Power Pick",
   "item.power_tools.power_scoop": "Power Scoop",
   "item.power_tools.power_chop": "Power Chop",
+  "item.power_tools.power_hoe": "Power Hoe",
   "item.power_tools.citrine": "Citrine",
   "block.power_tools.citrine_ore": "Citrine Ore"
 }
