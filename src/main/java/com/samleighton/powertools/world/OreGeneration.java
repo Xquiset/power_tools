@@ -3,8 +3,6 @@ package com.samleighton.powertools.world;
 import com.samleighton.powertools.PowerTools;
 import com.samleighton.powertools.init.BlockRegistry;
 import net.minecraft.block.BlockState;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
