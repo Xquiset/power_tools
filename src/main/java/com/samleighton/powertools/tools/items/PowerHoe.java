@@ -63,23 +63,31 @@ public class PowerHoe extends PowerToolsItem {
             return ActionResultType.FAIL;
         }
 
-        if (!this.tryTill(stack, player, world, pos, direction, hand)) {
+/*        if (!this.tryTill(stack, player, world, pos, direction, hand)) {
             return ActionResultType.FAIL;
-        } else {
+        }*/
+        if (!player.isCrouching()){
+            playTillSound(world, player, pos, direction);
             BlockPos.getAllInBox(pos.add(-1,0,-1), pos.add(1,0,1)).forEach(aoePos -> { this.tryTill(stack, player, world, aoePos, direction, hand); });
-            world.playSound(player, pos, SoundEvents.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
+        } else {
+            playTillSound(world, player, pos, direction);
+            this.tryTill(stack, player, world, pos, direction, hand);
         }
 
         // PASS is a lie
         // ActionResultType must be success for immediate till
-        return ActionResultType.SUCCESS;
+        if (direction != Direction.DOWN && world.isAirBlock(pos.up())) {
+            return ActionResultType.SUCCESS;
+        }
+
+        return ActionResultType.PASS;
     }
 
     public boolean tryTill(ItemStack stack, PlayerEntity player, World world, BlockPos pos, Direction direction, Hand hand) {
         if (direction != Direction.DOWN && world.isAirBlock(pos.up())) {
-            BlockState state = world.getBlockState(pos).getToolModifiedState(world, pos, player, stack, net.minecraftforge.common.ToolType.HOE);
+            BlockState state = POWERHOE_LOOKUP.get(world.getBlockState(pos).getBlock());
             if (state != null) {
-                if (!world.isRemote()) {
+                if (!world.isRemote) {
                     world.setBlockState(pos, state, 11);
                     if (player != null) {
                         stack.damageItem(1, player, (entity) -> {
@@ -93,6 +101,12 @@ public class PowerHoe extends PowerToolsItem {
         }
 
         return false;
+    }
+
+    public static void playTillSound(World world, PlayerEntity player, BlockPos pos, Direction direction){
+        if (direction != Direction.DOWN && world.isAirBlock(pos.up())) {
+            world.playSound(player, pos, SoundEvents.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
+        }
     }
 
     public static BlockState getHoeTillingState(BlockState originalState) {
